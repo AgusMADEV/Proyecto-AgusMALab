@@ -1,7 +1,8 @@
 /*!
- * AgusmaLab - Librería de Componentes UI v2.0 (Mejorada)
- * Con búsqueda, ordenamiento, paginación y gráficos
- * Autor: Agust�n Mateo
+ * AgusmaLab - Librería de Componentes UI v3.0 (Premium)
+ * Con Glassmorphism, Iconos SVG, Animaciones y Tipografía Mejorada
+ * Búsqueda, Ordenamiento, Paginación y Gráficos
+ * Autor: Agust�n Mateo
  * Fecha: 17 de febrero de 2026
  */
 
@@ -38,7 +39,74 @@
   };
 
   /* ========================================
-     COMPONENTE: StatsCard (Mejorada)
+     ICONOS SVG PROFESIONALES
+     ======================================== */
+  const Iconos = {
+    usuarios: `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+    `,
+    dinero: `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23"></line>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+      </svg>
+    `,
+    pedidos: `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+    `,
+    estadisticas: `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </svg>
+    `,
+    tendencia: `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+        <polyline points="17 6 23 6 23 12"></polyline>
+      </svg>
+    `,
+    productos: `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+      </svg>
+    `,
+    ventas: `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+    `,
+    objetivo: `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <circle cx="12" cy="12" r="6"></circle>
+        <circle cx="12" cy="12" r="2"></circle>
+      </svg>
+    `
+  };
+
+  const obtenerIconoSVG = (nombreIcono) => {
+    return Iconos[nombreIcono] || Iconos.estadisticas;
+  };
+
+  /* ========================================
+     COMPONENTE: StatsCard (Premium con SVG)
      ======================================== */
   class StatsCard {
     constructor(contenedor, opciones = {}) {
@@ -51,11 +119,11 @@
       this.opciones = {
         titulo: opciones.titulo || 'Estadística',
         valor: opciones.valor || '0',
-        icono: opciones.icono || '📊',
+        icono: opciones.icono || 'estadisticas',
         colorIcono: opciones.colorIcono || 'primary',
         descripcion: opciones.descripcion || '',
         cambio: opciones.cambio || null,
-        tipoCambio: opciones.tipoCambio || 'neutral', // 'positivo', 'negativo', 'neutral'
+        tipoCambio: opciones.tipoCambio || 'neutral',
         ...opciones
       };
 
@@ -64,14 +132,18 @@
 
     renderizar() {
       this.contenedor.innerHTML = '';
-      this.contenedor.className = 'agl-container';
+      this.contenedor.className = 'agl-container agl-animate-in';
 
       const tarjeta = crearElemento('div', 'agl-stats-card');
 
       // Header
       const header = crearElemento('div', 'agl-stats-card-header');
       const titulo = crearElemento('div', 'agl-stats-card-title', this.opciones.titulo);
-      const icono = crearElemento('div', `ml-stats-card-icon ${this.opciones.colorIcono}`, this.opciones.icono);
+      
+      // Icono SVG
+      const icono = document.createElement('div');
+      icono.className = `agl-stats-card-icon ${this.opciones.colorIcono}`;
+      icono.innerHTML = obtenerIconoSVG(this.opciones.icono);
       
       header.appendChild(titulo);
       header.appendChild(icono);
@@ -91,7 +163,7 @@
         }
         
         if (this.opciones.cambio) {
-          const cambio = crearElemento('div', `ml-stats-card-change ${this.opciones.tipoCambio}`, this.opciones.cambio);
+          const cambio = crearElemento('div', `agl-stats-card-change ${this.opciones.tipoCambio}`, this.opciones.cambio);
           footer.appendChild(cambio);
         }
         
@@ -102,7 +174,7 @@
       
       // Guardar referencias
       this.elementoValor = valor;
-      this.elementoCambio = this.contenedor.querySelector('.ml-stats-card-change');
+      this.elementoCambio = this.contenedor.querySelector('.agl-stats-card-change');
     }
 
     actualizarValor(nuevoValor, animar = true) {
@@ -110,7 +182,7 @@
       if (this.elementoValor) {
         if (animar) {
           this.elementoValor.classList.add('animating');
-          setTimeout(() => this.elementoValor.classList.remove('animating'), 300);
+          setTimeout(() => this.elementoValor.classList.remove('animating'), 400);
         }
         this.elementoValor.textContent = nuevoValor;
       }
@@ -122,7 +194,7 @@
       
       if (this.elementoCambio) {
         this.elementoCambio.textContent = cambio;
-        this.elementoCambio.className = `ml-stats-card-change ${tipo}`;
+        this.elementoCambio.className = `agl-stats-card-change ${tipo}`;
       } else {
         this.renderizar();
       }
@@ -549,7 +621,8 @@
     StatsCard: StatsCard,
     DataTable: DataTable,
     BarChart: BarChart,
-    version: '2.0.0'
+    Iconos: Iconos,
+    version: '3.0.0'
   };
 }));
 
