@@ -325,7 +325,73 @@
       }
 
       this.contenedor.appendChild(wrapper);
+      
+      // Guardar referencias para actualizaciones parciales
+      this.wrapper = wrapper;
+      this.tabla = tabla;
+      
       this._adjuntarEventos();
+    }
+
+    _actualizarContenido() {
+      // Actualizar solo tbody y footer sin tocar el header
+      if (!this.tabla) return;
+      
+      // Actualizar tbody
+      const tbody = this.tabla.querySelector('tbody');
+      if (tbody) {
+        tbody.innerHTML = '';
+        const datosPaginados = this._obtenerDatosPaginados();
+        
+        if (datosPaginados.length === 0) {
+          const filaVacia = document.createElement('tr');
+          const celdaVacia = crearElemento('td', '', 'No hay datos para mostrar');
+          celdaVacia.colSpan = this.opciones.columnas.length;
+          celdaVacia.style.textAlign = 'center';
+          celdaVacia.style.padding = '2rem';
+          celdaVacia.style.color = 'var(--agl-text-muted)';
+          filaVacia.appendChild(celdaVacia);
+          tbody.appendChild(filaVacia);
+        } else {
+          datosPaginados.forEach(fila => {
+            const tr = document.createElement('tr');
+            
+            this.opciones.columnas.forEach(col => {
+              const campo = col.campo || col;
+              const td = crearElemento('td');
+              
+              const valor = Array.isArray(fila) ? 
+                fila[this.opciones.columnas.indexOf(col)] : 
+                fila[campo];
+              
+              td.textContent = valor !== null && valor !== undefined ? valor : '';
+              tr.appendChild(td);
+            });
+            
+            tbody.appendChild(tr);
+          });
+        }
+      }
+      
+      // Actualizar thead (para indicadores de ordenamiento)
+      const headers = this.tabla.querySelectorAll('th.sortable');
+      headers.forEach(th => {
+        th.classList.remove('sorted-asc', 'sorted-desc');
+        const campo = th.dataset.campo;
+        if (this.columnaOrden === campo) {
+          th.classList.add(this.direccionOrden === 'asc' ? 'sorted-asc' : 'sorted-desc');
+        }
+      });
+      
+      // Actualizar footer de paginación
+      if (this.opciones.paginacion) {
+        const footerAntiguo = this.wrapper.querySelector('.agl-table-footer');
+        if (footerAntiguo) {
+          footerAntiguo.remove();
+        }
+        this._renderizarPaginacion(this.wrapper);
+        this._adjuntarEventosPaginacion();
+      }
     }
 
     _renderizarPaginacion(wrapper) {
@@ -382,7 +448,7 @@
           this.terminoBusqueda = e.target.value;
           this._filtrarDatos();
           this.paginaActual = 1;
-          this.renderizar();
+          this._actualizarContenido();
         });
       }
 
@@ -398,14 +464,18 @@
             this.direccionOrden = 'asc';
           }
           this._ordenarDatos();
-          this.renderizar();
+          this._actualizarContenido();
         });
       });
 
+      this._adjuntarEventosPaginacion();
+    }
+
+    _adjuntarEventosPaginacion() {
       // Paginación
-      const btnAnterior = this.contenedor.querySelector('.ml-table-pagination button:first-child');
-      const btnSiguiente = this.contenedor.querySelector('.ml-table-pagination button:last-child');
-      const btnsPagina = this.contenedor.querySelectorAll('.ml-table-pagination button[data-pagina]');
+      const btnAnterior = this.contenedor.querySelector('.agl-table-pagination button:first-child');
+      const btnSiguiente = this.contenedor.querySelector('.agl-table-pagination button:last-child');
+      const btnsPagina = this.contenedor.querySelectorAll('.agl-table-pagination button[data-pagina]');
 
       if (btnAnterior) {
         btnAnterior.addEventListener('click', () => this.paginaAnterior());
@@ -477,14 +547,14 @@
       const totalPaginas = Math.ceil(this.datosFiltrados.length / this.opciones.filasPorPagina);
       if (this.paginaActual < totalPaginas) {
         this.paginaActual++;
-        this.renderizar();
+        this._actualizarContenido();
       }
     }
 
     paginaAnterior() {
       if (this.paginaActual > 1) {
         this.paginaActual--;
-        this.renderizar();
+        this._actualizarContenido();
       }
     }
 
@@ -492,7 +562,7 @@
       const totalPaginas = Math.ceil(this.datosFiltrados.length / this.opciones.filasPorPagina);
       if (pagina >= 1 && pagina <= totalPaginas) {
         this.paginaActual = pagina;
-        this.renderizar();
+        this._actualizarContenido();
       }
     }
 
