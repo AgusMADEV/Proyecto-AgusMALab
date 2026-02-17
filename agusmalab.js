@@ -655,7 +655,7 @@
         ctx.fillRect(x, y, anchoBarra, alturaBarra);
 
         // Valor encima de la barra
-        ctx.fillStyle = '#1e293b';
+        ctx.fillStyle = '#cbd5e1';
         ctx.textAlign = 'center';
         ctx.fillText(valor, x + anchoBarra / 2, y - 5);
 
